@@ -4,11 +4,19 @@ const Schema = mongoose.Schema
 const ToDoList = new Schema({
     name: {
         type: String,
-        default: ''
+        default: '',
+        unique: true
       },
     listItems:[{
         text: String,
-        }]
+        },
+      {
+        edit: Boolean,
+        default:false
+      }],
+    doneListItems:[{
+      text: String,
+      }]
     
 })
 
