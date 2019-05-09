@@ -13,7 +13,7 @@ const forgotPassword = require('../libs/sendmailLib');
 
 
 /* Models */
-const UserModel = mongoose.model('User')
+const UserModel = mongoose.model('User');
 
 
 /* Get all user Details */

@@ -9,7 +9,6 @@ let userSchema = new Schema({
   userId: {
     type: String,
     default: '',
-    index: true,
     unique: true
   },
   firstName: {
@@ -44,7 +43,19 @@ let userSchema = new Schema({
   resetPasswordExpires: {
     type: String,
     default: ''
-  }
+  },
+  friendRequests: [{
+    _id: String,
+    email: String,
+    firstName: String,
+    lastName: String
+  }],
+  friends: [{
+    _id: String,
+    email: String,
+    firstName: String,
+    lastName: String
+  }]
 
 
 })

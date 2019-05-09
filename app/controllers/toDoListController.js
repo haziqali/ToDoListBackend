@@ -244,7 +244,7 @@ let clearDoneItems = (req, res) => {
 let editItem = (req, res) => {
     console.log(req.body.oldValue);
     console.log(req.body.newValue);
-    listModel.update({ 'name': req.body.listName }, { "$set": { 'itemList.$.text.1': req.body.newValue} }).exec((err, result) => {
+    listModel.update({ name: req.body.listName, "listItems.text": req.body.oldValue }, { "$set": { 'listItems.$.text': req.body.newValue} }).exec((err, result) => {
         
         if (err) {
             console.log(err)

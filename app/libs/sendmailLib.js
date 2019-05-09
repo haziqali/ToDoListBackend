@@ -7,10 +7,13 @@ const bcrypt = require('bcrypt');
 const response = require('./../libs/responseLib');
 
 let smtpTransport = nodemailer.createTransport({
-    service: 'fastmail',
+    host: 'smtp.mail.yahoo.com',
+    port: 465,
+    service:'yahoo',
+    secure: false,
     auth: {
-      user: 'hazali@fastmail.com',
-      pass: 'rvag4u54ly67dbl3'
+      user: 'todolistmanagement@yahoo.com',
+      pass: 'faynnrmcvzxpkapd'
     }
   });
 
@@ -44,7 +47,7 @@ let forgot_password = function(req, res) {
       },
       function(token, user, done) {
         var data = {
-            from: 'hazali@fastmail.com',
+            from: 'todolistmanagement@yahoo.com',
             to: user.email,
             subject: 'Reset Password for List Management',
             text: 'Hi ' + user.firstName + ' ! \n\n You are receiving this because you have requested the reset of the password for your account.\n\n' +
@@ -59,6 +62,7 @@ let forgot_password = function(req, res) {
             let apiResponse = response.generate(false, 'Kindly check your email for further instructions', 200, null);
             res.send(apiResponse);
           } else {
+            console.log(err)
             let apiResponse = response.generate(true, 'Some error occured while trying to send mail', 500, null);
             res.send(apiResponse);
           }
@@ -90,7 +94,7 @@ let forgot_password = function(req, res) {
             } else {
               var data = {
                 to: user.email,
-                from: 'hazali@fastmail.com',
+                from: 'todolistmanagement@yahoo.com',
                 subject: 'Password Reset Confirmation',
                 text: `Hi ${user.firstName}! \n\n
                 Your password has been successfully reset. You can now login with your new password.`
