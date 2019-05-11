@@ -7,6 +7,7 @@ const ToDoList = new Schema({
         default: '',
         unique: true
       },
+
     listItems:[{
         text: String,
         },
@@ -14,8 +15,14 @@ const ToDoList = new Schema({
         edit: Boolean,
         default:false
       }],
+
     doneListItems:[{
       text: String,
+      }],
+
+      users: [{
+        type: String
+      
       }]
     
 })

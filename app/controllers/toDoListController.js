@@ -10,9 +10,11 @@ const check = require('../libs/checkLib');
 const listModel = mongoose.model('ToDoList')
 
 
+
 /* Get all user Details */
 let getAllLists = (req, res) => {
-    listModel.find()
+    console.log(JSON.parse(req.body.users));
+    listModel.find({ users: { $in: JSON.parse(req.body.users) }})
         .select(' -__v -_id')
         .lean()
         .exec((err, result) => {
@@ -57,7 +59,8 @@ let createListFunction = (req, res) => {
                     } else if (check.isEmpty(retrievedUserDetails)) {
                         console.log(req.body)
                         let newList = new listModel({  
-                            name: req.body.name
+                            name: req.body.name,
+                            users: JSON.parse(req.body.users)
                         })
                         newList.save((err, newList) => {
                             if (err) {
@@ -95,8 +98,8 @@ let createListFunction = (req, res) => {
 
 
 let getList = (req, res) => {
-    console.log(req.params.listName);
-    listModel.findOne({ 'name': req.params.listName })
+    console.log(JSON.parse(req.body.users))
+    listModel.findOne({ 'name': req.body.name,'users': { $in: JSON.parse(req.body.users) }})
         .select('-__v -_id')
         .lean()
         .exec((err, result) => {
@@ -118,13 +121,14 @@ let getList = (req, res) => {
 
 let addItem = (req, res) => {
     console.log(req.body.listItems);
-    listModel.update({ 'name': req.body.listName }, {$push: {listItems: { text: req.body.listItems}}}).exec((err, result) => {
+    listModel.update({ 'name':req.body.listName}, {$push: {listItems: {text:req.body.listItems}}}).exec((err, result) => {
         if (err) {
             console.log(err)
             logger.error(err.message, 'List Controller: addItem', 10)
             let apiResponse = response.generate(true, 'Failed To edit List details', 500, null)
             res.send(apiResponse)
         } else if (check.isEmpty(result)) {
+            console.log(req.body.listItems);
             logger.info('No List Found', 'List Controller: addItem')
             let apiResponse = response.generate(true, 'No List Found', 404, null)
             res.send(apiResponse)
@@ -155,6 +159,7 @@ let deleteItem = (req, res) => {
 }
 
 let doneItem = (req, res) => {
+    
     listModel.update({ 'name': req.body.listName }, {$pull: {listItems: { text: req.body.listItems}}}).exec((err, result) => {
         if (err) {
             console.log(err)
@@ -186,24 +191,6 @@ let doneItem = (req, res) => {
     });
 }
 
-let clearAll = (req, res) => {
-    listModel.update({ 'name': req.body.listName }, {$set: { listItems: [] }}).exec((err, result) => {
-        if (err) {
-            console.log(err)
-            logger.error(err.message, 'List Controller: addItem', 10)
-            let apiResponse = response.generate(true, 'Failed To edit List details', 500, null)
-            res.send(apiResponse)
-        } else if (check.isEmpty(result)) {
-            logger.info('No List Found', 'List Controller: addItem')
-            let apiResponse = response.generate(true, 'No List Found', 404, null)
-            res.send(apiResponse)
-        } else {
-            listModel.update({ 'name': req.body.listName }, {$set: { doneListItems: [] }}).exec((err, result));
-            let apiResponse = response.generate(false, 'Cleared all items', 200, result)
-            res.send(apiResponse)
-        }
-    });
-}
 
 let clearActiveItems = (req, res) => {
     listModel.update({ 'name': req.body.listName }, {$set: { listItems: [] }}).exec((err, result) => {
@@ -217,6 +204,24 @@ let clearActiveItems = (req, res) => {
             let apiResponse = response.generate(true, 'No List Found', 404, null)
             res.send(apiResponse)
         } else {
+            let apiResponse = response.generate(false, 'Cleared all items', 200, result)
+            res.send(apiResponse)
+        }
+    });
+}
+let clearAllItems = (req, res) => {
+    listModel.update({ 'name':req.body.listName}, {$set: {listItems: [] }}).exec((err, result) => {
+        if (err) {
+            
+            logger.error(err.message, 'List Controller: addItem', 10)
+            let apiResponse = response.generate(true, 'Failed To edit List details', 500, null)
+            res.send(apiResponse)
+        } else if (check.isEmpty(result)) {
+            logger.info('No List Found1', 'List Controller: addItem')
+            let apiResponse = response.generate(true, 'No List Found1', 404, null)
+            res.send(apiResponse)
+        } else {
+            listModel.update({ 'name': req.body.listName }, {$set: { doneListItems: [] }}).exec((err, result));
             let apiResponse = response.generate(false, 'Cleared all items', 200, result)
             res.send(apiResponse)
         }
@@ -244,11 +249,11 @@ let clearDoneItems = (req, res) => {
 let editItem = (req, res) => {
     console.log(req.body.oldValue);
     console.log(req.body.newValue);
-    listModel.update({ name: req.body.listName, "listItems.text": req.body.oldValue }, { "$set": { 'listItems.$.text': req.body.newValue} }).exec((err, result) => {
+    listModel.update({ name: req.body.name, "listItems.text": req.body.oldValue }, { "$set": { 'listItems.$.text': req.body.newValue} }).exec((err, result) => {
         
         if (err) {
             console.log(err)
-            logger.error(err.message, 'List Controller: addItem', 10)
+            logger.error(err.message, 'List Controller: editItem', 10)
             let apiResponse = response.generate(true, 'Failed To edit List details', 500, null)
             res.send(apiResponse)
         } else if (check.isEmpty(result)) {
@@ -274,7 +279,7 @@ module.exports = {
     addItem: addItem,
     deleteItem: deleteItem,
     doneItem: doneItem,
-    clearAll: clearAll,
+    clearAllItems: clearAllItems,
     clearDoneItems: clearDoneItems,
     clearActiveItems: clearActiveItems,
     editItem: editItem

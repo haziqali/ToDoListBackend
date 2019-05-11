@@ -34,8 +34,7 @@ let verifyClaim = (token,secretKey,cb) => {
       cb(err,null)
     }
     else{
-      console.log("user verified");
-      console.log(decoded);
+     
       cb(null,decoded);
     }  
  
