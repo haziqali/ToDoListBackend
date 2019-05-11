@@ -15,8 +15,41 @@ module.exports.setRouter = (app) => {
     // params: userId.
     app.post(`${baseUrl}/userDetails`, auth.isAuthorized, userController.getSingleUser);
 
-    
-    // params: firstName, lastName, email, mobileNumber, password, apiKey.
+    /**
+     * @apiGroup users
+     * @apiVersion  1.0.0
+     * @api {post} /api/v1/users/signup api for user signup.
+     *
+     * @apiParam {string} email of the user. (body params) (required)
+     * @apiParam {string} password of the user. (body params) (required)
+     * @apiParam {string} first name  of the user. (body params) (required)
+     * @apiParam {string} last name  of the user. (body params) (required)
+     * @apiParam {string} mobile password of the user. (body params) (required)
+     *
+     * @apiSuccess {object} myResponse shows error status, message, http status code, result.
+     * 
+     * @apiSuccessExample {object} Success-Response:
+         {
+            "error": false,
+            "message": "User created",
+            "status": 200,
+            "data": {
+                "__v": 0,
+                "_id": "5cd71b9b75a9f33a70094334",
+                "friends": [],
+                "friendRequests": [],
+                "resetPasswordExpires": "",
+                "resetPasswordToken": "",
+                "createdOn": "2019-05-11T18:59:39.000Z",
+                "mobileNumber": "",
+                "email": "hgh@gf.com",
+                "lastName": "jhg",
+                "firstName": "asd",
+                "userId": "72UylR956"
+            }
+        }
+    */
+   
     app.post(`${baseUrl}/signup`, userController.signUpFunction);
 
     /**
@@ -49,11 +82,42 @@ module.exports.setRouter = (app) => {
 
     app.post(`${baseUrl}/login`, userController.loginFunction);
 
-    app.put(`${baseUrl}/:userId/edit`, auth.isAuthorized, userController.editUser);
 
-    app.post(`${baseUrl}/:userId/delete`, auth.isAuthorized, userController.deleteUser);
+  
 
-    
+    /**
+     * @apiGroup users
+     * @apiVersion  1.0.0
+     * @api {post} /api/v1/users/logout api for user logout.
+     *
+     * @apiParam {string} userid userid of the user. (body params) (required)
+     *
+     * @apiSuccess {object} myResponse shows error status, message, http status code, result.
+     * 
+     * @apiSuccessExample {object} Success-Response:
+         app.post(`${baseUrl}/signup`, userController.signUpFunction);
+
+    /**
+     * @apiGroup users
+     * @apiVersion  1.0.0
+     * @api {post} /api/v1/users/login api for user login.
+     *
+     * @apiParam {string} email email of the user. (body params) (required)
+     * @apiParam {string} password password of the user. (body params) (required)
+     *
+     * @apiSuccess {object} myResponse shows error status, message, http status code, result.
+     * 
+     * @apiSuccessExample {object} Success-Response:
+        {
+            "error": false,
+            "message": "Logged Out Successfully",
+            "status": 200,
+            "data": null
+        }
+    */
+
+
+
 
     app.post(`${baseUrl}/logout`, auth.isAuthorized, userController.logout);
 

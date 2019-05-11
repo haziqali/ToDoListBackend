@@ -13,7 +13,7 @@ const listModel = mongoose.model('ToDoList')
 
 /* Get all user Details */
 let getAllLists = (req, res) => {
-    console.log(JSON.parse(req.body.users));
+    console.log(req.body);
     listModel.find({ users: { $in: JSON.parse(req.body.users) }})
         .select(' -__v -_id')
         .lean()
@@ -87,6 +87,7 @@ let createListFunction = (req, res) => {
         .then(createList)
         .then((resolve) => {
             let apiResponse = response.generate(false, 'List created', 200, resolve)
+            console.log(apiResponse)
             res.send(apiResponse)
         })
         .catch((err) => {
@@ -223,6 +224,7 @@ let clearAllItems = (req, res) => {
         } else {
             listModel.update({ 'name': req.body.listName }, {$set: { doneListItems: [] }}).exec((err, result));
             let apiResponse = response.generate(false, 'Cleared all items', 200, result)
+           
             res.send(apiResponse)
         }
     });
@@ -247,8 +249,8 @@ let clearDoneItems = (req, res) => {
 }
 
 let editItem = (req, res) => {
-    console.log(req.body.oldValue);
-    console.log(req.body.newValue);
+    
+    console.log(req.body);
     listModel.update({ name: req.body.name, "listItems.text": req.body.oldValue }, { "$set": { 'listItems.$.text': req.body.newValue} }).exec((err, result) => {
         
         if (err) {
@@ -264,6 +266,7 @@ let editItem = (req, res) => {
         } else {
             
             let apiResponse = response.generate(false, 'List Item edited sucessfully', 200, result)
+            console.log(apiResponse)
             res.send(apiResponse)
         }
     });

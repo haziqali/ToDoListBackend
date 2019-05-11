@@ -46,10 +46,11 @@ let setServer = (server) => {
                     socket.join(socket.room);
                     socket.join(`${currentUser.email}`);
                     socket.to(socket.room).broadcast.emit('new-user-online',`${fullName} is online`);
-                    let userObj = {userId:currentUser.userId,fullName:fullName}
+                    let userObj = {userId:currentUser.userId,fullName:fullName, email: currentUser.email}
+                    if(allOnlineUsers.includes(userObj) === false) {
                     allOnlineUsers.push(userObj)
+                    }
                     console.log(allOnlineUsers)
-                   
                     socket.to(socket.room).broadcast.emit('online-user-list',allOnlineUsers);
 
                 }
@@ -69,7 +70,7 @@ let setServer = (server) => {
                     console.log("sending Friend Request");
                     let currentUser = user.data; 
                     let fullName = `${currentUser.firstName} ${currentUser.lastName}`
-                    socket.to(`${data.receiverMail}`).broadcast.emit('new-user-online',`Friend Request recieved from ${fullName}`);
+                    socket.to(`${data.receiverMail}`).broadcast.emit('new-user-online',`Friend Request recieved from ${fullName}. Please go to Manage Friends Tab and reload the page to accept.`);
                     eventEmitter.emit('save-friend-request', data);
                     console.log(`${data.senderMail}-friend-request-sent`);
                     myIo.emit(`${data.senderMail}-friend-request-sent`, `Your friend request has been sucessfully sent to ${data.receiverMail}`);
