@@ -40,7 +40,6 @@ let getAllUser = (req, res) => {
 
 /* Get single user details */
 let getSingleUser = (req, res) => {
-    console.log(req.body.email)
     UserModel.findOne({ 'email': req.body.email})
         .select('-password -__v -_id')
         .lean()
@@ -148,7 +147,6 @@ let signUpFunction = (req, res) => {
                         let apiResponse = response.generate(true, 'Failed To Create User', 500, null)
                         reject(apiResponse)
                     } else if (check.isEmpty(retrievedUserDetails)) {
-                        console.log(req.body)
                         let newUser = new UserModel({
                             userId: shortid.generate(),
                             firstName: req.body.firstName,
@@ -196,11 +194,8 @@ let signUpFunction = (req, res) => {
 // start of login function 
 let loginFunction = (req, res) => {
     let findUser = () => {
-        console.log("findUser");
         return new Promise((resolve, reject) => {
             if (req.body.email) {
-                console.log("req body email is there");
-                console.log(req.body);
                 UserModel.findOne({ email: req.body.email}, (err, userDetails) => {
                     /* handle the error here if the User is not found */
                     if (err) {

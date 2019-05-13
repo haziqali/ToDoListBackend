@@ -73,7 +73,6 @@ let setServer = (server) => {
                     let fullName = `${currentUser.firstName} ${currentUser.lastName}`
                     socket.to(`${data.receiverMail}`).broadcast.emit('new-user-online',`Friend Request recieved from ${fullName}. Please go to Manage Friends Tab and reload the page to accept.`);
                     eventEmitter.emit('save-friend-request', data);
-                    console.log(`${data.senderMail}-friend-request-sent`);
                     myIo.emit(`${data.senderMail}-friend-request-sent`, `Your friend request has been sucessfully sent to ${data.receiverMail}`);
 
                    
@@ -84,7 +83,6 @@ let setServer = (server) => {
         socket.on('friend-request-accepted',(data, authToken) => {    
             console.log("socket event: friend-request-accepted");
             eventEmitter.emit('accept-friend-request', data);
-            console.log(`${data.senderMail}-friend-request-accepted-db`);
             myIo.emit(`${data.senderMail}-friend-request-accepted-db`, `${data.receiverMail} has been sucessfully added to your friend list.`);
             myIo.emit(`${data.receiverMail}-friend-request-accepted-db`, `${data.senderMail} has been sucessfully added to your friend list.`);               
             });
@@ -113,12 +111,7 @@ let setServer = (server) => {
         });
 
             socket.on('disconnect', () => {
-                // disconnect the user from socket
-                // remove the user from online list
-                // unsubscribe the user from his own channel
                 console.log("user is disconnected");
-                // console.log(socket.connectorName);
-                console.log(socket.userId);
                 var removeIndex = allOnlineUsers.map(function(user) { return user.userId; }).indexOf(socket.userId);
                 allOnlineUsers.splice(removeIndex,1)
                 console.log(allOnlineUsers)
@@ -137,7 +130,6 @@ let setServer = (server) => {
 eventEmitter.on('save-friend-request', (data) => {
 
     // let today = Date.now();
-    console.log(data);
     UserModel.update({ 'email': data.receiverMail }, {$addToSet: {friendRequests: {_id : 123, email : data.senderMail, firstName: data.senderFirstName, lastName: data.senderLastname}}}).exec((err, result) => {
         if (err) {
             console.log(err)
@@ -156,8 +148,6 @@ eventEmitter.on('save-friend-request', (data) => {
 
 eventEmitter.on('accept-friend-request', (data) => {
 
-    // let today = Date.now();
-    console.log(data);
     UserModel.update({ 'email': data.receiverMail }, {$addToSet: {friends: {_id : 123, email : data.senderMail, firstName: data.senderFirstName, lastName: data.senderLastname}}}).exec((err, result) => {
         if (err) {
             console.log(err)
