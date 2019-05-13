@@ -42,10 +42,11 @@ let setServer = (server) => {
                     socket.userId = currentUser.userId
                     socket.email = currentUser.email
                     let fullName = `${currentUser.firstName} ${currentUser.lastName}`
+                    socket.fullName = fullName;
                     socket.room = "publicChat";
                     socket.join(socket.room);
                     socket.join(`${currentUser.email}`);
-                    socket.to(socket.room).broadcast.emit('new-user-online',`${fullName} is online`);
+                    socket.to(socket.room).broadcast.emit('new-user-online',`${socket.fullName} (${socket.email}) is online`);
                     let userObj = {userId:currentUser.userId,fullName:fullName, email: currentUser.email}
                     if(allOnlineUsers.includes(userObj) === false) {
                     allOnlineUsers.push(userObj)
@@ -122,6 +123,7 @@ let setServer = (server) => {
                 allOnlineUsers.splice(removeIndex,1)
                 console.log(allOnlineUsers)
                 socket.to("publicChat").broadcast.emit('online-user-list',allOnlineUsers);
+                socket.to("publicChat").broadcast.emit('user-offline',`${socket.fullName} (${socket.email}) is offline`);
                
                 socket.leave("publicChat")
             });
