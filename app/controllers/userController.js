@@ -38,6 +38,29 @@ let getAllUser = (req, res) => {
         })
 }// end get all users
 
+let findUsers = (req, res) => {
+    console.log(`${req.body.term}.*`);
+    UserModel.find({ email: { $regex: `${req.body.term}.*`} })
+        .select(' -__v -_id')
+        .lean()
+        .exec((err, result) => {
+            if (err) {
+                console.log(err)
+                logger.error(err.message, 'User Controller: findUsers', 10)
+                let apiResponse = response.generate(true, 'Failed To Find User Details', 500, null)
+                res.send(apiResponse)
+            } else if (check.isEmpty(result)) {
+                logger.info('No User Found', 'User Controller: getAllUser')
+                let apiResponse = response.generate(true, 'No User Found', 404, null)
+                res.send(apiResponse)
+            } else {
+                console.log(result)
+                let apiResponse = response.generate(false, 'User Details Found', 200, result)
+                res.send(result);
+            }
+        })
+}
+
 /* Get single user details */
 let getSingleUser = (req, res) => {
     UserModel.findOne({ 'email': req.body.email})
@@ -365,6 +388,7 @@ module.exports = {
 
     signUpFunction: signUpFunction,
     getAllUser: getAllUser,
+    findUsers: findUsers,
     editUser: editUser,
     deleteUser: deleteUser,
     getSingleUser: getSingleUser,

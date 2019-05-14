@@ -11,6 +11,8 @@ module.exports.setRouter = (app) => {
 
     app.get(`${baseUrl}/view/all`, auth.isAuthorized, userController.getAllUser);
 
+    app.post(`${baseUrl}/findUsers`, auth.isAuthorized, userController.findUsers);
+
 
     // params: userId.
     app.post(`${baseUrl}/userDetails`, auth.isAuthorized, userController.getSingleUser);
